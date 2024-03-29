@@ -11,6 +11,8 @@ client = discord.Client(intents=intents)
 
 Cookies = os.environ.get("cookies")
 
+print(Cookies)
+
 def GetPending():
     url = "https://economy.roblox.com/v2/users/5012222377/transaction-totals"
     headers = {
@@ -34,7 +36,7 @@ def GetPending():
     }
 
     response = requests.get(url, headers=headers, params=params)
-
+    print("response:",response)
     return response.json()["pendingRobuxTotal"]
 
 
