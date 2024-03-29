@@ -98,8 +98,8 @@ async def on_message(message):
 
     if message.content.lower() == "$pe" or message.content.lower() == "$pending":
         target_channel = message.channel
-        text = "Current Pending:" + str(GetPending())
-        await message.channel.send(text)
+        # text = "Current Pending:" + str(GetPending())
+        # await message.channel.send(text)
 
 
 token = os.environ.get("token")
