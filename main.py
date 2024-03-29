@@ -1,12 +1,42 @@
 import os
 import discord
 from keep_alive import keep_alive
+import requests
 
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
 client = discord.Client(intents=intents)
+
+Cookies = os.environ.get("cookies")
+
+def GetPending():
+    url = "https://economy.roblox.com/v2/users/5012222377/transaction-totals"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "de,en-US;q=0.7,en;q=0.3",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Origin": "https://www.roblox.com",
+        "Connection": "keep-alive",
+        "Referer": "https://www.roblox.com/",
+        "Cookie": str(Cookies),
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-site",
+        "TE": "trailers"
+    }
+
+    params = {
+        "timeFrame": "Month",
+        "transactionType": "summary"
+    }
+
+    response = requests.get(url, headers=headers, params=params)
+
+    return response.json()["pendingRobuxTotal"]
+
 
 @client.event
 async def on_ready():
@@ -63,6 +93,11 @@ async def on_message(message):
         FirstMessageInChannel = await get_first_message(message)
         await target_channel.edit(name="[Important] " + str(old_channel_name))
         await add_reaction(FirstMessageInChannel)
+
+    if message.content.lower() == "$pe" or message.content.lower() == "$pending":
+        target_channel = message.channel
+        text = "Current Pending:" + str(GetPending())
+        await message.channel.send(text)
 
 
 token = os.environ.get("token")
